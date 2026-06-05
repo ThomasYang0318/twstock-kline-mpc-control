@@ -11,4 +11,4 @@ build/
 .env
 data/
 reports/
-
+figures/.mplconfig/

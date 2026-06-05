@@ -21,6 +21,8 @@ Generated on 2026-06-05.
 | 6 | `2303` | `1,447,956.33` | `44.80%` | `-10.69%` | `97.61%` |
 | 7 | `2412` | `1,148,998.48` | `14.90%` | `-7.08%` | `13.73%` |
 
+Publication-style figures are available in [figures.md](figures.md).
+
 ## Quick Read
 
 - `2330`, `2317`, and `2454` are the strongest results in this run.
@@ -40,4 +42,3 @@ Generated on 2026-06-05.
 
 These CSV outputs are intentionally ignored by Git so large generated data does
 not crowd the repository.
-
