@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "twstock-kline-mpc-control"
+version = "0.1.0"
+description = "Taiwan stock K-line data pipeline with a model predictive control allocation strategy."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "ThomasYang0318" }]
+dependencies = [
+  "matplotlib>=3.8",
+  "numpy>=1.26",
+  "pandas>=2.0",
+  "rich>=13.0",
+  "scipy>=1.11",
+  "typer>=0.12",
+  "yfinance>=0.2.40",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.5",
+]
+
+[project.scripts]
+twstock-mpc = "twstock_kline_mpc_control.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
