@@ -9,7 +9,16 @@ simple trend and volatility features, then uses a model predictive control
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
+python -m pip install -U pip
 python -m pip install -e ".[dev]"
+```
+
+If your pip version is too old for editable `pyproject.toml` installs, install
+the runtime dependencies directly and run with `PYTHONPATH=src`:
+
+```powershell
+python -m pip install yfinance typer rich pandas numpy scipy matplotlib pytest
+$env:PYTHONPATH='src'
 ```
 
 ## Fetch K-line Data
@@ -30,6 +39,9 @@ twstock-mpc backtest data/2330.csv --initial-cash 1000000 --out reports/2330_bac
 The backtest CSV includes close price, target weight, daily portfolio return,
 equity curve, and drawdown.
 
+See [docs/backtest_2330.md](docs/backtest_2330.md) for a generated 2330.TW
+example result.
+
 ## Python API
 
 ```python
@@ -47,4 +59,3 @@ print(result.summary)
 This is a research scaffold, not investment advice. The default signal is
 intentionally simple so you can replace it with your own forecasting model,
 risk model, or execution rules.
-

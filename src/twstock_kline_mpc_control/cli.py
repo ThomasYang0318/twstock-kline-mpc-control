@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Optional
 
 import typer
 from rich.console import Console
@@ -19,7 +20,7 @@ console = Console()
 def fetch(
     symbol: str = typer.Argument(..., help="Taiwan stock code, e.g. 2330."),
     start: str = typer.Option(..., help="Start date, YYYY-MM-DD."),
-    end: str | None = typer.Option(None, help="End date, YYYY-MM-DD."),
+    end: Optional[str] = typer.Option(None, help="End date, YYYY-MM-DD."),
     interval: str = typer.Option("1d", help="Yahoo Finance interval."),
     out: Path = typer.Option(Path("data/kline.csv"), help="Output CSV path."),
 ) -> None:
@@ -37,7 +38,7 @@ def backtest(
     risk_aversion: float = typer.Option(10.0, help="Risk penalty."),
     turnover_penalty: float = typer.Option(0.5, help="Trading smoothness penalty."),
     transaction_cost: float = typer.Option(0.001, help="One-way transaction cost ratio."),
-    out: Path | None = typer.Option(None, help="Optional equity curve CSV path."),
+    out: Optional[Path] = typer.Option(None, help="Optional equity curve CSV path."),
 ) -> None:
     """Run the default MPC allocation backtest."""
     frame = load_ohlcv_csv(csv_path)
@@ -63,4 +64,3 @@ def backtest(
     for key, value in result.summary.items():
         table.add_row(key, f"{value:,.4f}")
     console.print(table)
-
