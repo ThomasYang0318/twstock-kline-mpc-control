@@ -8,7 +8,7 @@ from rich.console import Console
 from rich.table import Table
 
 from .backtest import run_backtest
-from .data import fetch_ohlcv, load_ohlcv_csv, save_ohlcv_csv
+from .data import fetch_intraday_ohlcv, fetch_latest_quote, fetch_ohlcv, load_ohlcv_csv, save_ohlcv_csv
 from .mpc import MPCConfig
 
 
@@ -28,6 +28,40 @@ def fetch(
     frame = fetch_ohlcv(symbol=symbol, start=start, end=end, interval=interval)
     save_ohlcv_csv(frame, out)
     console.print(f"Saved {len(frame)} rows to [bold]{out}[/bold]")
+
+
+@app.command()
+def quote(
+    symbol: str = typer.Argument(..., help="Taiwan stock code, e.g. 2330."),
+    period: str = typer.Option("1d", help="Intraday period to save when --out is used."),
+    interval: str = typer.Option("1m", help="Intraday interval to save when --out is used."),
+    out: Optional[Path] = typer.Option(None, help="Optional intraday OHLCV CSV path."),
+) -> None:
+    """Fetch the latest available quote snapshot."""
+    quote_info = fetch_latest_quote(symbol)
+
+    table = Table(title=f"Latest Quote: {quote_info['ticker']}")
+    table.add_column("Field")
+    table.add_column("Value", justify="right")
+    for key in [
+        "last_price",
+        "previous_close",
+        "open",
+        "day_high",
+        "day_low",
+        "volume",
+        "latest_bar_time",
+        "source",
+    ]:
+        value = quote_info[key]
+        table.add_row(key, "" if value is None else str(value))
+    console.print(table)
+    console.print("Note: Yahoo Finance Taiwan quotes may be delayed; use a broker/licensed feed for exchange-grade real-time ticks.")
+
+    if out:
+        frame = fetch_intraday_ohlcv(symbol=symbol, period=period, interval=interval)
+        save_ohlcv_csv(frame, out)
+        console.print(f"Saved {len(frame)} intraday rows to [bold]{out}[/bold]")
 
 
 @app.command()

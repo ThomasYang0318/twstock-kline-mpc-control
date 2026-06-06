@@ -42,6 +42,17 @@ equity curve, and drawdown.
 See [docs/backtest_2330.md](docs/backtest_2330.md) for a generated 2330.TW
 example result.
 
+## Fetch Latest Available Quote
+
+```powershell
+twstock-mpc quote 2330 --out data/2330_intraday.csv
+```
+
+The quote command prints the latest available snapshot and can save recent
+intraday bars. Yahoo Finance Taiwan data should be treated as latest available
+or delayed data, not exchange-grade real-time tick data. See
+[docs/realtime_data.md](docs/realtime_data.md).
+
 ## Python API
 
 ```python
