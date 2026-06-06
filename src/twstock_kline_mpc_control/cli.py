@@ -10,6 +10,7 @@ from rich.table import Table
 from .backtest import run_backtest
 from .data import fetch_intraday_ohlcv, fetch_latest_quote, fetch_ohlcv, load_ohlcv_csv, save_ohlcv_csv
 from .mpc import MPCConfig
+from .training import calibrate_mpc
 
 
 app = typer.Typer(no_args_is_help=True, help="Taiwan stock K-line MPC control CLI.")
@@ -98,3 +99,70 @@ def backtest(
     for key, value in result.summary.items():
         table.add_row(key, f"{value:,.4f}")
     console.print(table)
+
+
+@app.command()
+def calibrate(
+    csv_path: Path = typer.Argument(..., help="CSV file produced by fetch."),
+    holdout_years: int = typer.Option(4, help="Final years reserved for non-overlapping holdout backtest."),
+    initial_cash: float = typer.Option(1_000_000.0, help="Initial account value."),
+    transaction_cost: float = typer.Option(0.001, help="One-way transaction cost ratio."),
+    grid_out: Optional[Path] = typer.Option(None, help="Optional train-grid CSV path."),
+    holdout_out: Optional[Path] = typer.Option(None, help="Optional holdout equity curve CSV path."),
+) -> None:
+    """Tune MPC parameters on train data and evaluate on a final holdout period."""
+    frame = load_ohlcv_csv(csv_path)
+    result = calibrate_mpc(
+        frame,
+        holdout_years=holdout_years,
+        initial_cash=initial_cash,
+        transaction_cost=transaction_cost,
+    )
+
+    split_table = Table(title="Non-Overlapping Split")
+    split_table.add_column("Period")
+    split_table.add_column("Start")
+    split_table.add_column("End")
+    split_table.add_column("Rows", justify="right")
+    split_table.add_row(
+        "train",
+        str(result.split.train_start.date()),
+        str(result.split.train_end.date()),
+        str(len(result.split.train)),
+    )
+    split_table.add_row(
+        "holdout",
+        str(result.split.holdout_start.date()),
+        str(result.split.holdout_end.date()),
+        str(len(result.split.holdout)),
+    )
+    console.print(split_table)
+
+    config = result.best_config
+    console.print(
+        "Best train config: "
+        f"horizon={config.horizon}, risk_aversion={config.risk_aversion}, "
+        f"turnover_penalty={config.turnover_penalty}, transaction_cost={config.transaction_cost}"
+    )
+
+    summary_table = Table(title="Train vs Holdout Summary")
+    summary_table.add_column("Metric")
+    summary_table.add_column("Train", justify="right")
+    summary_table.add_column("Holdout", justify="right")
+    for key in result.train_result.summary:
+        summary_table.add_row(
+            key,
+            f"{result.train_result.summary[key]:,.4f}",
+            f"{result.holdout_result.summary[key]:,.4f}",
+        )
+    console.print(summary_table)
+
+    if grid_out:
+        grid_out.parent.mkdir(parents=True, exist_ok=True)
+        result.grid_results.to_csv(grid_out, index=False)
+        console.print(f"Saved train calibration grid to [bold]{grid_out}[/bold]")
+
+    if holdout_out:
+        holdout_out.parent.mkdir(parents=True, exist_ok=True)
+        result.holdout_result.equity_curve.to_csv(holdout_out, index=False)
+        console.print(f"Saved holdout equity curve to [bold]{holdout_out}[/bold]")

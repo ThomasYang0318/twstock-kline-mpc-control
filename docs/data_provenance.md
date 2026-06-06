@@ -46,6 +46,12 @@ close prices, volumes, and date availability for listed stocks.
 | `2603` | 968 | 2022-01-03 | 2025-12-30 | `dd4d450cbb43f59e10c5af863daf1385820ac68fc01dbe3f076011ca625e5f5f` |
 | `2882` | 968 | 2022-01-03 | 2025-12-30 | `23a95e6566f24aeee5cfde107d148c8aa9b5c0b1b2c99cc9171d3a14b9bc18b9` |
 
+Long-history file used for the train/holdout example:
+
+| Symbol | Rows | Start | End | SHA256 |
+| --- | ---: | --- | --- | --- |
+| `2330_long` | 3912 | 2010-01-04 | 2025-12-30 | `ce5a8c4eae99c32894b4d52090abca2c3cf9bd36ab6483d859971f48f96ea886` |
+
 ## Verification Protocol for a Paper
 
 1. Cite the data provider used by the experiment.
@@ -69,4 +75,3 @@ close prices, volumes, and date availability for listed stocks.
 ```powershell
 python -B scripts/validate_data_provenance.py
 ```
-

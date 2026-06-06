@@ -42,6 +42,20 @@ equity curve, and drawdown.
 See [docs/backtest_2330.md](docs/backtest_2330.md) for a generated 2330.TW
 example result.
 
+## Calibrate Then Hold Out
+
+For research, avoid tuning and evaluating on the same dates. This command tunes
+MPC parameters on the earlier period and reserves the final years for a
+non-overlapping holdout backtest:
+
+```powershell
+twstock-mpc calibrate data/2330.csv --holdout-years 4 --grid-out reports/2330_train_grid.csv --holdout-out reports/2330_holdout_backtest.csv
+```
+
+See [docs/experimental_protocol.md](docs/experimental_protocol.md).
+For an example using 2010-2021 as train data and 2021-2025 as a final holdout,
+see [docs/holdout_2330.md](docs/holdout_2330.md).
+
 ## Fetch Latest Available Quote
 
 ```powershell
