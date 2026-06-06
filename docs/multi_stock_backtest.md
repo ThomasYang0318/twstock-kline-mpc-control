@@ -22,6 +22,8 @@ Generated on 2026-06-05.
 | 7 | `2412` | `1,148,998.48` | `14.90%` | `-7.08%` | `13.73%` |
 
 Publication-style figures are available in [figures.md](figures.md).
+Data provenance and authenticity notes are available in
+[data_provenance.md](data_provenance.md).
 
 ## Quick Read
 
